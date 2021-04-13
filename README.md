@@ -1,70 +1,127 @@
-# Getting Started with Create React App
+# Recipe Planet
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+I denne opgave skal du lave en applikation, som gør det muligt at søge i og læse forskellige opskrifter.
 
-## Available Scripts
+Opgaven er delt op i 2 afdelinger:
 
-In the project directory, you can run:
+1. Et administrationspanel, hvor det er muligt at tilføje, slette og rette opskrifter.
+2. Selve applikationen, hvor det er muligt at søge og læse opskrifter.
 
-### `npm start`
+Begge dele af opgaven gør brug af et API, som du her får udleveret.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+For at bruge dette API, skal du installere det på din computer og køre det. Følg disse trin:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Første gang
+```
+$ npm install
+$ npm run build
+```
 
-### `npm test`
+Herefter, skal du køre
+```
+$ npm run develop
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Der er 2 brugere tilknyttet APIet:
 
-### `npm run build`
+Navn: Admin Adminsen  
+Email: admin@recipe-api.com  
+Adgangskode: Hul3p1ndsv1n
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Navn: Albert Jensen  
+Email: albert@recipe-api.com  
+Adgangskode: 123Albert123
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Du skal hovedsageligt kun bruge Albert.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Opgavens 1. del
 
-### `npm run eject`
+I denne første del af opgaven skal du lave et administrationspanel, hvor brugere (Albert) kan logge ind og oprette, redigere og slette opskrifter.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Administrationspanelets design skal ligne dette: https://rts-cmk.github.io/admin-panel/  
+(der må gerne være små afvigelser eller forbedringer, men overordnet set skal produktet matche designet)
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Views
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+* Log ind
+* Oversigt over brugerens opskrifter (med knapper til at slette og redigere, samt knap til at oprette ny opskrift)
+* Formular til oprettelse af ny opskrift
+* Formular til redigering af eksisterende opskrift
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Krav
 
-## Learn More
+* Alle formulares skal valideres med `useForm`
+* Alle destruktive handlinger skal bekræftes (fx slet en opskrift)
+* Credentials (token) skal gemmes enten i Context eller som en cookie, afhængig af hvad brugeren vælger når de logger ind.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+#### Felter i en opskrift
+* Navn på opskrift (`title`)
+* Beskrivelse (`description`)
+* Fremgangsmåde (`procedure`)
+* Billeder (`images`, liste/array)
+* Ingredienser (`ingredients`, liste/array)
+* Kalorier (`kcal`)
+* Protein (gram) (`protein`)
+* Kulhydrater (gram) (`carbs`)
+* Fedt (gram) (`fat`)
+* Kategori (`category`)
+* Type (`type`)
+* Forberedelsestid (minutter) (`cook_time`)
+* (Usynligt felt) Ophavsmand (hvilken bruger har forfattet denne opskrift) (`author`)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Stack
+* React
+* Sass
+* Bootstrap (valgfri)
+* react-hook-form (https://react-hook-form.com/get-started)
+* Axios (https://www.npmjs.com/package/axios)
 
-### Code Splitting
+## APIet
+Du kan downloade APIet her: https://github.com/rts-cmk/recipe-api
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Efter du har downloadet APIet skal du installere det:
+```
+$ npm install
+$ npm run build
+```
 
-### Analyzing the Bundle Size
+Når du kører APIet med `npm run develop`, er det tilgængeligt på http://localhost:1337.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+En anonym bruger kan se opskrifter (READ/GET) (alle og enkeltvis) på http://localhost:1337/recipes/[1,2,3,...]
 
-### Making a Progressive Web App
+En autoriseret bruger kan oprette opskrifter (CREATE/POST), se opskrifter (READ/GET), redigere opskrifter (UPDATE/PATCH/PUT) og slette opskrifter (DELETE) på samme adresse som ovenfor.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+En bruger kan autoriseres på (POST) http://localhost:1337/auth/local.
 
-### Advanced Configuration
+Eksempel på en autorisations-request (med axios):
+```javascript
+import axios from "axios";
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+var { data } = await axios.post("http://localhost:1337/auth/local", {
+	identifier: "albert@recipe-api.com",
+	password: "123Albert123"
+});
 
-### Deployment
+console.log(data);
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Eksempel på et kald til en resurse på APIet, som kræver token:
+```javascript
+import axios from "axios";
 
-### `npm run build` fails to minify
+var response = await axios.delete("http://localhost:1337/recipes/42", {
+	headers: {
+		Authorization: "Bearer <insert token here>"
+	}
+});
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+console.log(response);
+```
+
+## Forslag til arbejdsgang
+1. Lav komponenter til alle designelementerne, altså ikke noget funktionalitet endnu, kun JSX og Sass
+2. Få login processen på plads, så Albert kan logge ind og får et token, enten som cookie eller gemt i contexten
+3. Få vist en liste over alle Alberts opskrifter
+4. Opret en ny opskrift
+5. Slet en opskrift
+6. Rediger en opskrift
